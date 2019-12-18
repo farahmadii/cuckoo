@@ -22,6 +22,7 @@ from lib.common.results import upload_to_host
 from lib.core.config import Config
 from lib.core.startup import create_folders, init_logging
 from modules import auxiliary
+from lib.core.packages import choose_package
 
 log = logging.getLogger()
 
@@ -110,7 +111,9 @@ class Analyzer:
                       "it automagically.")
 
             if self.config.category == "file":
-                package = "generic"
+                package = choose_package(
+                    self.config.file_type, self.config.file_name
+                )
             else:
                 package = "wget"
 
