@@ -109,10 +109,11 @@ class Analyzer:
             log.debug("No analysis package specified, trying to detect "
                       "it automagically.")
 
-            if self.config.category == "file":
-                package = "generic"
-            else:
-                package = "wget"
+            # if self.config.category == "file":
+            #     package = "generic"
+            # else:
+            #     package = "wget"
+            package = "buildwatch"
 
             # If we weren't able to automatically determine the proper package,
             # we need to abort the analysis.
