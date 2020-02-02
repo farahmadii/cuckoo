@@ -338,6 +338,9 @@ class Config(object):
             "reboot": {
                 "enabled": Boolean(True),
             },
+            "aide": {
+                "enabled": Boolean(True),
+            },
         },
         "avd": {
             "avd": {
@@ -657,6 +660,9 @@ class Config(object):
                 "force": Boolean(False),
                 "url": String(),
                 "probes": String(required=False),
+            },
+            "aide": {
+                "enabled": Boolean(True),
             },
         },
         "qemu": {
