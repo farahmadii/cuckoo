@@ -15,6 +15,7 @@ from cuckoo.core.extract import ExtractManager
 
 from .platform.windows import WindowsMonitor
 from .platform.linux import LinuxSystemTap
+from .platform.linux_extended import LinuxApiStats
 
 log = logging.getLogger(__name__)
 
@@ -314,10 +315,10 @@ class BehaviorAnalysis(Processing):
         #     handlers += [
         #         WindowsMonitor(self),
         #     ]
-        # elif self.task.machine.platform == "linux":
-        #     handlers += [
-        #         LinuxSystemTap(self),
-        #     ]
+        elif self.task.machine.platform == "linux":
+            handlers += [
+                LinuxApiStats(self),
+            ]
 
         # create a lookup map
         interest_map = {}
