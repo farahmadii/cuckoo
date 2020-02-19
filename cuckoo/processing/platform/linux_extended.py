@@ -194,3 +194,55 @@ class LinuxFiles(BehaviorHandler):
             },
             "directories": list(self.opened_directories),
         }
+
+#-----------------------------------------------------------------------------------------
+# Network connect system call:
+#-----------------------------------------------------------------------------------------
+# {
+#   "status": "EINPROGRESS",
+#   "raw": "Thu Jan  9 22:54:55 2020.015918 python@7fbc4b88d8b4[1556] connect(6, {AF_INET, 121.42.217.44, 8080}, 16) = -115 (EINPROGRESS)\n",
+#   "api": "connect",
+#   "return_value": "-115",
+#   "instruction_pointer": "7fbc4b88d8b4",
+#   "time": 1578610495.015918,
+#   "process_name": "python",
+#   "pid": 1556,
+#   "arguments": {
+#     "p2": "16",
+#     "p0": "6",
+#     "p1": [
+#       "AF_INET",
+#       "121.42.217.44",
+#       "8080"
+#     ]
+#   }
+# }
+#-----------------------------------------------------------------------------------------
+
+class LinuxNetwork(BehaviorHandler):
+    """Network related system call."""
+    key = "network"
+    event_types = ["process"]
+
+    def __init__(self, *args, **kwargs):
+        super(LinuxNetwork, self).__init__(*args, **kwargs)
+        self.connected_ips = Set()
+        self.connected_sockets = Set()
+    
+    def handle_event(self, event):
+        log.info("Generating linux network report p:%s...." % event["pid"])
+        for call in event["calls"]:
+            api = call["api"]
+            
+            if api == "connect":
+                addr = call["arguments"]["p1"]
+                if len(addr) == 3 and type(addr) == list: # e.g addr: ["AF_INET", "121.42.217.44", "8080"]
+                    self.connected_ips.add(addr[1] + ":" + addr[2]) # "121.42.217.44:8080"
+                elif len(addr) == 2 and type(addr) == list: # e.g addr: ["AF_UNIX", "/var/run/nscd/socket"]
+                    self.connected_sockets.add(addr[1])
+    
+    def run(self):
+        return {
+            "connected_ips": list(self.connected_ips),
+            "connected_sockets": list(self.connected_sockets),
+        }

@@ -17,6 +17,7 @@ from .platform.windows import WindowsMonitor
 from .platform.linux import LinuxSystemTap
 from .platform.linux_extended import LinuxApiStats
 from .platform.linux_extended import LinuxFiles
+from .platform.linux_extended import LinuxNetwork
 
 log = logging.getLogger(__name__)
 
@@ -302,6 +303,7 @@ class BehaviorAnalysis(Processing):
             # extended linux stuff
             LinuxApiStats(self),
             LinuxFiles(self),
+            LinuxNetwork(self),
 
             # Reboot information.
             RebootInformation(self),
