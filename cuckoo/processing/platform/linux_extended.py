@@ -16,6 +16,7 @@ class LinuxApiStats(BehaviorHandler):
         self.processes = {}
 
     def handle_event(self, event):
+        log.info("Generating linux api stats report p:%s...." % event["pid"])
         pid = str(event["pid"])
         self.processes[pid] = {}
 
@@ -100,8 +101,15 @@ class LinuxFiles(BehaviorHandler):
         self.written_files = Set()
         self.opened_directories = Set()
         self.failed_to_open = Set()
+        self.pwd = ''
 
     def handle_event(self, event):
+        log.info("Generating linux files report p:%s...." % event["pid"])
+
+        if event["process_name"] == '.buildwatch.sh':
+            # e.g "command_line": "/tmpnmxNz9/.buildwatch.sh"
+            self.pwd = event['command_line'].replace('/.buildwatch.sh', '')
+
         for call in event["calls"]:
             api = call["api"]
             
@@ -173,6 +181,7 @@ class LinuxFiles(BehaviorHandler):
 
     def run(self):
         return {
+            "pwd": self.pwd,
             "read_filenames": list(self.read_files),
             "written_filenames": list(self.written_files),
             "opened": {
@@ -185,4 +194,3 @@ class LinuxFiles(BehaviorHandler):
             },
             "directories": list(self.opened_directories),
         }
-        
